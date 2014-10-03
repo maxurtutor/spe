@@ -4,12 +4,6 @@ import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailIDService;
 import org.maxur.spe.domain.MailService;
 import org.maxur.spe.domain.Repository;
-import org.maxur.spe.infrastructure.DataSourceFactory;
-import org.maxur.spe.infrastructure.MailIDServiceJDBCImpl;
-import org.maxur.spe.infrastructure.MailRepositoryJDBCImpl;
-import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
-
-import javax.sql.DataSource;
 
 import static java.lang.String.format;
 
@@ -19,43 +13,31 @@ import static java.lang.String.format;
  */
 public class Worker {
 
-    public static final String FROM_ADDRESS = "sender@here.com";
-
     public static final String TO_ADDRESS = "receiver@there.com";
-
-    private long count = 0;
 
     private MailService mailService;
 
     private Repository<Mail> repository;
 
-    public Worker() {
-        init();
-    }
+    private MailIDService idService;
 
-    public void init() {
-        mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
-        final DataSource dataSource = new DataSourceFactory().get();
-        repository = new MailRepositoryJDBCImpl(dataSource);
-        MailIDService service = new MailIDServiceJDBCImpl(dataSource);
-        count = service.getId();
+    public Worker(MailService mailService, Repository<Mail> repository, MailIDService idService) {
+        this.mailService = mailService;
+        this.repository = repository;
+        this.idService = idService;
     }
 
     public String run(String request) throws Exception {
-        final String message = format("%d: %s", count++, request);
-
-
+        final Long id = idService.getId();
+        final String message = format("%d: %s", id, request);
         final Mail mail = Mail.builder()
-                .id(count)
+                .id(id)
                 .subject(message)
                 .body(message)
                 .toAddress(TO_ADDRESS)
                 .build();
-
         repository.save(mail);
-
         mailService.send(mail);
-
         return message;
     }
 

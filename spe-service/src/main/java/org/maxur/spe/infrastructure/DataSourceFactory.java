@@ -23,38 +23,55 @@ public class DataSourceFactory implements Factory<DataSource> {
 
     private static Logger LOGGER = getLogger(MailServiceJavaxImpl.class);
 
-    public static final String USERNAME = "";
+    public final String username;
 
-    public static final String PASSWORD = "";
+    public final String password;
 
-    public static final String DB_PATH = "/persistence/db";
+    public final String dbPath;
+
+    private DataSource dataSource;
+
+    public DataSourceFactory(String dbPath, String password, String username) {
+        this.dbPath = dbPath;
+        this.password = password;
+        this.username = username;
+    }
 
     @Override
     public DataSource get() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-        dataSource.setUrl(format("jdbc:derby:%s;create=true", DB_PATH));
-        dataSource.setUsername(USERNAME);
-        dataSource.setPassword(PASSWORD);
-        if (!new File(DB_PATH).exists()) {
-            final InputStream ddl = DataSourceFactory.class.getResourceAsStream("/sql/schema.ddl");
-            if (ddl == null) {
-                LOGGER.error("/sql/schema.ddl not found");
-                return null;
-            }
-            try ( Connection connection = dataSource.getConnection()){
-
-                ij.runScript(connection,
-                        ddl,
-                        "UTF-8",
-                        System.out,
-                        "UTF-8"
-                );
-            } catch (SQLException | UnsupportedEncodingException e) {
-                LOGGER.error("Database is not created", e);
+        if (dataSource == null) {
+            dataSource = makeDataSource();
+            if (!new File(dbPath).exists()) {
+                makeDatabase(dataSource);
             }
         }
-
         return dataSource;
+    }
+
+    private DataSource makeDataSource() {
+        final DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+        ds.setUrl(format("jdbc:derby:%s;create=true", dbPath));
+        ds.setUsername(username);
+        ds.setPassword(password);
+        return ds;
+    }
+
+    private void makeDatabase(DataSource ds) {
+        final InputStream ddl = DataSourceFactory.class.getResourceAsStream("/sql/schema.ddl");
+        if (ddl == null) {
+            LOGGER.error("DDL schema is not found");
+            throw new IllegalStateException("DDL schema is not found");
+        }
+        try ( Connection connection = ds.getConnection()){
+            ij.runScript(connection,
+                    ddl,
+                    "UTF-8",
+                    System.out,
+                    "UTF-8"
+            );
+        } catch (SQLException | UnsupportedEncodingException e) {
+            LOGGER.error("Database is not created", e);
+        }
     }
 }

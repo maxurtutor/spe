@@ -26,7 +26,7 @@ public class MailServiceJDBCImplTest extends AbstractDAOJDBCTest {
 
     @Before
     public void initTest() throws Exception {
-        service = new MailIDServiceJDBCImpl(dataSource);
+        service = new MailIDServiceJDBCImpl(this);
 
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(
                 MailServiceJDBCImplTest.class.getResourceAsStream("/sql/dataset.xml"));

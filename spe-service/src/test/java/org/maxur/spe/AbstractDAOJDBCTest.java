@@ -3,8 +3,10 @@ package org.maxur.spe;
 import org.apache.derby.tools.ij;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.maxur.spe.domain.Factory;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 /**
@@ -12,7 +14,7 @@ import java.sql.SQLException;
  * @version 1.0
  * @since <pre>2/28/14</pre>
  */
-public class AbstractDAOJDBCTest {
+public class AbstractDAOJDBCTest implements Factory<DataSource> {
 
     protected static DriverManagerDataSource dataSource;
 
@@ -50,4 +52,8 @@ public class AbstractDAOJDBCTest {
     }
 
 
+    @Override
+    public DataSource get() {
+        return dataSource;
+    }
 }

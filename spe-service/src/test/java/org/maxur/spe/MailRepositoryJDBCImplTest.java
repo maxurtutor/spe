@@ -29,7 +29,7 @@ public class MailRepositoryJDBCImplTest extends AbstractDAOJDBCTest {
 
     @Before
     public void initTest() throws Exception {
-        repository = new MailRepositoryJDBCImpl(dataSource);
+        repository = new MailRepositoryJDBCImpl(this);
 
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(
                 MailRepositoryJDBCImplTest.class.getResourceAsStream("/sql/dataset.xml"));

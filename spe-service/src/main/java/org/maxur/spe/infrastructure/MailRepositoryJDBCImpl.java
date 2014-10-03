@@ -1,5 +1,6 @@
 package org.maxur.spe.infrastructure;
 
+import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
 import org.springframework.dao.DataAccessException;
@@ -20,8 +21,8 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
     private final DataSource dataSource;
 
-    public MailRepositoryJDBCImpl(final DataSource dataSource) {
-        this.dataSource = dataSource;
+    public MailRepositoryJDBCImpl(Factory<DataSource> factory) {
+        this.dataSource = factory.get();
     }
 
     @Override
