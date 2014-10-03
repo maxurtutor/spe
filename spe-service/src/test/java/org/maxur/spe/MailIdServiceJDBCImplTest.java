@@ -8,8 +8,8 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.maxur.spe.domain.MailIDService;
-import org.maxur.spe.infrastructure.MailIDServiceJDBCImpl;
+import org.maxur.spe.domain.MailIdService;
+import org.maxur.spe.infrastructure.MailIdServiceJDBCImpl;
 
 import java.sql.Connection;
 
@@ -20,16 +20,16 @@ import static org.junit.Assert.assertEquals;
  * @version 1.0
  * @since <pre>2/28/14</pre>
  */
-public class MailServiceJDBCImplTest extends AbstractDAOJDBCTest {
+public class MailIdServiceJDBCImplTest extends AbstractDAOJDBCTest {
 
-    private MailIDService service;
+    private MailIdService service;
 
     @Before
     public void initTest() throws Exception {
-        service = new MailIDServiceJDBCImpl(this);
+        service = new MailIdServiceJDBCImpl(this);
 
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(
-                MailServiceJDBCImplTest.class.getResourceAsStream("/sql/dataset.xml"));
+                MailIdServiceJDBCImplTest.class.getResourceAsStream("/sql/dataset.xml"));
 
         try(final Connection connection = getConnection()) {
             IDatabaseConnection databaseConnection = new DatabaseConnection(connection);

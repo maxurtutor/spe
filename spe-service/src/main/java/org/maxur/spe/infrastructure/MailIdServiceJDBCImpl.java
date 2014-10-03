@@ -1,7 +1,7 @@
 package org.maxur.spe.infrastructure;
 
 import org.maxur.spe.domain.Factory;
-import org.maxur.spe.domain.MailIDService;
+import org.maxur.spe.domain.MailIdService;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -11,11 +11,11 @@ import javax.sql.DataSource;
  * @version 1.0
  * @since <pre>10/2/2014</pre>
  */
-public class MailIDServiceJDBCImpl implements MailIDService {
+public class MailIdServiceJDBCImpl implements MailIdService {
 
     private final DataSource dataSource;
 
-    public MailIDServiceJDBCImpl(Factory<DataSource> factory) {
+    public MailIdServiceJDBCImpl(Factory<DataSource> factory) {
         this.dataSource = factory.get();
     }
 

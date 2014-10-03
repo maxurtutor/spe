@@ -63,11 +63,14 @@ public class DataSourceFactory implements Factory<DataSource> {
             LOGGER.error("DDL schema is not found");
             throw new IllegalStateException("DDL schema is not found");
         }
-        try ( Connection connection = ds.getConnection()){
+        try (
+                Connection connection = ds.getConnection();
+                LogOutputStream stream = new LogOutputStream(LOGGER)
+        ){
             ij.runScript(connection,
                     ddl,
                     "UTF-8",
-                    System.out,
+                    stream,
                     "UTF-8"
             );
         } catch (SQLException | UnsupportedEncodingException e) {

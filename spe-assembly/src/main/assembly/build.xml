@@ -28,10 +28,18 @@
             <fileMode>0644</fileMode>
             <directoryMode>0755</directoryMode>
             <includes>
-                <include>org.maxur:spe-service:*:jar-with-dependencies</include>
+                <include>org.maxur:spe-service</include>
                 <include>org.maxur:spe-test-client</include>
+
                 <include>org.apache.derby:derby</include>
                 <include>org.apache.derby:derbyclient</include>
+                <include>org.apache.derby:derbytools</include>
+
+                <include>org.springframework:spring-jdbc</include>
+                <include>javax.mail:mail</include>
+
+                <include>org.slf4j:slf4j-api</include>
+                <include>ch.qos.logback:logback-classic</include>
             </includes>
         </dependencySet>
     </dependencySets>

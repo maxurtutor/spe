@@ -4,11 +4,16 @@ import org.apache.derby.tools.ij;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.maxur.spe.domain.Factory;
+import org.maxur.spe.infrastructure.LogOutputStream;
+import org.slf4j.Logger;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * @author Maxim Yunusov
  * @version 1.0
@@ -16,24 +21,26 @@ import java.sql.SQLException;
  */
 public class AbstractDAOJDBCTest implements Factory<DataSource> {
 
+    private static Logger LOGGER = getLogger(AbstractDAOJDBCTest.class);
+
     protected static DriverManagerDataSource dataSource;
 
     @BeforeClass
     public static void initTestFixture() throws Exception {
-// Initialize the datasource, could /should be done of Spring
-// configuration
         dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
         dataSource.setUrl("jdbc:derby:c:\\temp\\database\\test01;create=true");
         dataSource.setUsername("");
         dataSource.setPassword("");
 
-        ij.runScript(getConnection(),
-                AbstractDAOJDBCTest.class.getResourceAsStream("/sql/schema.ddl"),
-                "UTF-8",
-                System.out,
-                "UTF-8"
-        );
+        try(LogOutputStream stream = new LogOutputStream(LOGGER)) {
+            ij.runScript(getConnection(),
+                    AbstractDAOJDBCTest.class.getResourceAsStream("/sql/schema.ddl"),
+                    "UTF-8",
+                    stream,
+                    "UTF-8"
+            );
+        }
     }
 
     protected static Connection getConnection() {
@@ -56,4 +63,5 @@ public class AbstractDAOJDBCTest implements Factory<DataSource> {
     public DataSource get() {
         return dataSource;
     }
+
 }

@@ -3,11 +3,11 @@ package org.maxur.spe.client;
 import org.maxur.spe.Worker;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
-import org.maxur.spe.domain.MailIDService;
+import org.maxur.spe.domain.MailIdService;
 import org.maxur.spe.domain.MailService;
 import org.maxur.spe.domain.Repository;
 import org.maxur.spe.infrastructure.DataSourceFactory;
-import org.maxur.spe.infrastructure.MailIDServiceJDBCImpl;
+import org.maxur.spe.infrastructure.MailIdServiceJDBCImpl;
 import org.maxur.spe.infrastructure.MailRepositoryJDBCImpl;
 import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
 
@@ -40,7 +40,7 @@ public class Client {
         MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
         Factory<DataSource> factory = new DataSourceFactory(DB_PATH, USERNAME, PASSWORD);
         Repository<Mail> repository = new MailRepositoryJDBCImpl(factory);
-        MailIDService idService = new MailIDServiceJDBCImpl(factory);
+        MailIdService idService = new MailIdServiceJDBCImpl(factory);
         worker = new Worker(mailService, repository, idService);
     }
 

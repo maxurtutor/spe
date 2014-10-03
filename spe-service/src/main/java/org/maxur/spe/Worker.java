@@ -1,11 +1,14 @@
 package org.maxur.spe;
 
 import org.maxur.spe.domain.Mail;
-import org.maxur.spe.domain.MailIDService;
+import org.maxur.spe.domain.MailIdService;
 import org.maxur.spe.domain.MailService;
 import org.maxur.spe.domain.Repository;
+import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
+import org.slf4j.Logger;
 
 import static java.lang.String.format;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * @author Maxim Yunusov
@@ -13,21 +16,24 @@ import static java.lang.String.format;
  */
 public class Worker {
 
+    private static Logger LOGGER = getLogger(MailServiceJavaxImpl.class);
+
     public static final String TO_ADDRESS = "receiver@there.com";
 
     private MailService mailService;
 
     private Repository<Mail> repository;
 
-    private MailIDService idService;
+    private MailIdService idService;
 
-    public Worker(MailService mailService, Repository<Mail> repository, MailIDService idService) {
+    public Worker(MailService mailService, Repository<Mail> repository, MailIdService idService) {
         this.mailService = mailService;
         this.repository = repository;
         this.idService = idService;
     }
 
     public String run(String request) throws Exception {
+        LOGGER.debug("run");
         final Long id = idService.getId();
         final String message = format("%d: %s", id, request);
         final Mail mail = Mail.builder()
