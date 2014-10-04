@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  */
 public class Client {
 
-    public static final String DB_PATH = "/persistence/db";
+    public static final String DB_PATH = "./persistence/db";
 
     public static final String USERNAME = "";
 
