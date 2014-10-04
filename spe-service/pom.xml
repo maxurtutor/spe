@@ -4,6 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <jersey.version>2.13</jersey.version>
+        <grizzly.version>2.3.16</grizzly.version>
+    </properties>
+
     <parent>
         <groupId>org.maxur</groupId>
         <artifactId>spe</artifactId>
@@ -15,14 +20,32 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+
+
+        <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>

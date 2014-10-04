@@ -3,6 +3,7 @@ package org.maxur.spe.infrastructure;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
+import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,12 +13,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * @author Maxim Yunusov
  * @version 1.0 14.09.2014
  */
 public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
+    private static Logger LOGGER = getLogger(MailRepositoryJDBCImpl.class);
 
     private Factory<Connection> factory;
 
@@ -41,6 +45,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
                 return null;
             }
         } catch (SQLException e) {
+            LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection");
         }
     }
@@ -60,6 +65,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
             }
             return result;
         } catch (SQLException e) {
+            LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection");
         }
     }
@@ -89,6 +95,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
             stmt.setString(4, value.getBody());
             stmt.executeUpdate();
         } catch (SQLException e) {
+            LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection");
         }
 

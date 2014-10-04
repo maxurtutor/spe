@@ -44,6 +44,7 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
         try {
             prop.load(in);
         } catch (IOException e) {
+            LOGGER.error("JDBC property file is not loaded", e);
             throw new IllegalStateException("JDBC property file is not loaded", e);
         }
         return prop;
@@ -70,6 +71,7 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
                     url,
                     connectionProps);
         } catch (SQLException e) {
+            LOGGER.error("Connection is not created", e);
             throw new IllegalStateException("Connection is not created", e);
         }
     }
@@ -78,6 +80,7 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
     private void makeDatabase() {
         final InputStream ddl = ConnectionFactoryJDBCImpl.class.getResourceAsStream("/sql/schema.ddl");
         if (ddl == null) {
+            LOGGER.error("DDL schema is not found");
             throw new IllegalStateException("DDL schema is not found");
         }
         try (
@@ -91,6 +94,7 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
                     "UTF-8"
             );
         } catch (SQLException | UnsupportedEncodingException e) {
+            LOGGER.error("Database is not created", e);
             throw new IllegalStateException("Database is not created", e);
         }
     }

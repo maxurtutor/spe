@@ -9,7 +9,7 @@ import javax.mail.MessagingException;
  */
 public interface MailService {
 
-    void send(Mail mail) throws MessagingException;
+    void send(Mail mail);
 
     void done();
 }

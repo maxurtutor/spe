@@ -22,7 +22,7 @@ public class Worker {
         this.idService = idService;
     }
 
-    public String run(String request) throws Exception {
+    public String run(String request) {
         final Long id = idService.getId();
         final String message = format("%d: %s", id, request);
         final Mail mail = Mail.builder()

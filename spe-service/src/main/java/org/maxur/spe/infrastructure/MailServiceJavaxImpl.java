@@ -49,12 +49,12 @@ public class MailServiceJavaxImpl implements MailService {
 
 
     @Override
-    public void send(final Mail mail) throws MessagingException {
+    public void send(final Mail mail) {
         try {
             Transport.send(makeMessageBy(mail));
         } catch (MessagingException e) {
             LOGGER.error("Unable to send email", e);
-            throw e;
+            throw new IllegalStateException("Unable to send email", e);
         }
     }
 
