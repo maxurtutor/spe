@@ -1,4 +1,4 @@
-package org.maxur.spe;
+package org.maxur.spe.infrastructure;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
-import org.maxur.spe.infrastructure.MailRepositoryJDBCImpl;
 
 import java.sql.Connection;
 import java.util.List;

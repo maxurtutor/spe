@@ -1,4 +1,4 @@
-package org.maxur.spe;
+package org.maxur.spe.infrastructure;
 
 import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;

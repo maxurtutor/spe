@@ -1,10 +1,5 @@
-package org.maxur.spe;
+package org.maxur.spe.domain;
 
-import org.maxur.spe.domain.Mail;
-import org.maxur.spe.domain.MailIdService;
-import org.maxur.spe.domain.MailService;
-import org.maxur.spe.domain.Repository;
-import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
 import org.slf4j.Logger;
 
 import static java.lang.String.format;
@@ -16,7 +11,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class Worker {
 
-    private static Logger LOGGER = getLogger(MailServiceJavaxImpl.class);
+    private static Logger LOGGER = getLogger(Worker.class);
 
     public static final String TO_ADDRESS = "receiver@there.com";
 

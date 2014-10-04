@@ -19,7 +19,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Maxim Yunusov
  * @version 1.0 03.10.2014
  */
-public class DataSourceFactory implements Factory<DataSource> {
+public class DataSourceFactoryEmbeddedDerbyImpl implements Factory<DataSource> {
 
     private static Logger LOGGER = getLogger(MailServiceJavaxImpl.class);
 
@@ -31,7 +31,7 @@ public class DataSourceFactory implements Factory<DataSource> {
 
     private DataSource dataSource;
 
-    public DataSourceFactory(String dbPath, String password, String username) {
+    public DataSourceFactoryEmbeddedDerbyImpl(String dbPath, String password, String username) {
         this.dbPath = dbPath;
         this.password = password;
         this.username = username;
@@ -40,25 +40,26 @@ public class DataSourceFactory implements Factory<DataSource> {
     @Override
     public DataSource get() {
         if (dataSource == null) {
-            dataSource = makeDataSource();
-            if (!new File(dbPath).exists()) {
+            boolean isNew = isNew();
+            dataSource = makeDataSource(isNew);
+            if (isNew) {
                 makeDatabase(dataSource);
             }
         }
         return dataSource;
     }
 
-    private DataSource makeDataSource() {
+    private DataSource makeDataSource(boolean mustBeCreated) {
         final DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-        ds.setUrl(format("jdbc:derby:%s;create=true", dbPath));
+        ds.setUrl(format("jdbc:derby:%s;%s", dbPath, mustBeCreated ? ";create=true" : ""));
         ds.setUsername(username);
         ds.setPassword(password);
         return ds;
     }
 
     private void makeDatabase(DataSource ds) {
-        final InputStream ddl = DataSourceFactory.class.getResourceAsStream("/sql/schema.ddl");
+        final InputStream ddl = DataSourceFactoryEmbeddedDerbyImpl.class.getResourceAsStream("/sql/schema.ddl");
         if (ddl == null) {
             LOGGER.error("DDL schema is not found");
             throw new IllegalStateException("DDL schema is not found");
@@ -76,5 +77,9 @@ public class DataSourceFactory implements Factory<DataSource> {
         } catch (SQLException | UnsupportedEncodingException e) {
             LOGGER.error("Database is not created", e);
         }
+    }
+
+    public boolean isNew() {
+        return !new File(dbPath).exists();
     }
 }
