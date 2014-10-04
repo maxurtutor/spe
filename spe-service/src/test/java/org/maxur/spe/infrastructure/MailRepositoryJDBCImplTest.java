@@ -33,7 +33,7 @@ public class MailRepositoryJDBCImplTest extends AbstractDAOJDBCTest {
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(
                 MailRepositoryJDBCImplTest.class.getResourceAsStream("/sql/dataset.xml"));
 
-        try(final Connection connection = getConnection()) {
+        try(final Connection connection = get()) {
             IDatabaseConnection databaseConnection = new DatabaseConnection(connection);
             DatabaseOperation.CLEAN_INSERT.execute(databaseConnection, dataSet);
         }

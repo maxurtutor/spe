@@ -2,9 +2,11 @@ package org.maxur.spe.infrastructure;
 
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.MailIdService;
-import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Maxim Yunusov
@@ -13,19 +15,26 @@ import javax.sql.DataSource;
  */
 public class MailIdServiceJDBCImpl implements MailIdService {
 
-    private final DataSource dataSource;
 
-    public MailIdServiceJDBCImpl(Factory<DataSource> factory) {
-        this.dataSource = factory.get();
+    private Factory<Connection> factory;
+
+    public MailIdServiceJDBCImpl(Factory<Connection> factory) {
+        this.factory = factory;
     }
 
     @Override
     public Long getId() {
-        JdbcTemplate select = new JdbcTemplate(dataSource);
-        final Long result = select.queryForObject("select max(ID) from MAIL", Long.class);
-        if (result == null) {
-            return 0l;
+        try (
+                Connection con = factory.get();
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery("select max(ID) from MAIL");
+        ) {
+            return rs.next() ?
+                    rs.getLong(1) + 1l :
+                    0l;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Don't get database connection", e);
         }
-        return result + 1L;
     }
+
 }

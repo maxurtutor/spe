@@ -3,9 +3,7 @@ package org.maxur.spe.infrastructure;
 import org.junit.BeforeClass;
 import org.maxur.spe.domain.Factory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -14,26 +12,18 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @version 1.0
  * @since <pre>2/28/14</pre>
  */
-public class AbstractDAOJDBCTest implements Factory<DataSource> {
+public class AbstractDAOJDBCTest implements Factory<Connection> {
 
-    private static Factory<DataSource> dataSourceFactory;
+    private static Factory<Connection> factory;
 
     @BeforeClass
     public static void initTestFixture() throws Exception {
-        dataSourceFactory = new DataSourceFactoryEmbeddedDerbyImpl("./temp/database/test01", "", "");
+        factory = new ConnectionFactoryJDBCImpl();
     }
 
-    protected static Connection getConnection() {
-        try {
-            return dataSourceFactory.get().getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Connection get() {
+        return factory.get();
     }
 
-    @Override
-    public DataSource get() {
-        return dataSourceFactory.get();
-    }
 
 }

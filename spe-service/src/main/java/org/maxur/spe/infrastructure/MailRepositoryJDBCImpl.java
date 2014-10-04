@@ -3,14 +3,13 @@ package org.maxur.spe.infrastructure;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,50 +18,80 @@ import java.util.List;
  */
 public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
-    private final DataSource dataSource;
 
-    public MailRepositoryJDBCImpl(Factory<DataSource> factory) {
-        this.dataSource = factory.get();
+    private Factory<Connection> factory;
+
+    public MailRepositoryJDBCImpl(Factory<Connection> factory) {
+        this.factory = factory;
     }
+
+    private static final String SELECT_MAIL_BY_ID = "select ID, ADDRESS, SUBJECT, BODY from MAIL where ID = ?";
 
     @Override
     public Mail findById(Long id) {
-        JdbcTemplate select = new JdbcTemplate(dataSource);
-        final List<Mail> result = select
-                .query("select ID, ADDRESS, SUBJECT, BODY from MAIL where ID = ?",
-                        new Object[]{id},
-                        new ItemRowMapper());
-        if (result.isEmpty()) {
-            return null;
+        try (
+                Connection con = factory.get();
+                PreparedStatement stmt = con.prepareStatement(SELECT_MAIL_BY_ID);
+        ) {
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return assemble(rs);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Don't get database connection");
         }
-        if (result.size() > 1) {
-            throw new IllegalStateException("There are more than one item by one id");
-        }
-        return result.get(0);
     }
 
+    private static final String SELECT_ALL_MAIL = "select ID, ADDRESS, SUBJECT, BODY from MAIL";
 
     @Override
     public List<Mail> findAll() {
-        JdbcTemplate select = new JdbcTemplate(dataSource);
-        return select
-                .query("select ID, ADDRESS, SUBJECT, BODY from MAIL",
-                        new ItemRowMapper());
+        try (
+                Connection con = factory.get();
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(SELECT_ALL_MAIL);
+        ) {
+            List<Mail> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(assemble(rs));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Don't get database connection");
+        }
     }
+
+    private Mail assemble(ResultSet rs) throws SQLException {
+        return Mail.builder()
+                .id(rs.getLong("ID"))
+                .toAddress(rs.getString("ADDRESS"))
+                .subject(rs.getString("SUBJECT"))
+                .body(rs.getString("BODY"))
+                .build();
+    }
+
+
+    private static final String INSERT_MAIL = "insert into MAIL " +
+            "(ID, ADDRESS, SUBJECT, BODY) values (?, ?, ?, ?)";
 
     @Override
     public void save(Mail value) {
-        String sql = "insert into MAIL " +
-                "(ID, ADDRESS, SUBJECT, BODY) values (?, ?, ?, ?)";
+        try (
+                Connection con = factory.get();
+                PreparedStatement stmt = con.prepareStatement(INSERT_MAIL);
+        ) {
+            stmt.setLong(1, value.getId());
+            stmt.setString(2, value.getToAddress());
+            stmt.setString(3, value.getSubject());
+            stmt.setString(4, value.getBody());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Don't get database connection");
+        }
 
-        JdbcTemplate insert = new JdbcTemplate(dataSource);
-
-        insert.update(sql,
-                value.getId(),
-                value.getToAddress(),
-                value.getSubject(),
-                value.getBody()
-        );
     }
 
     @Override
@@ -70,24 +99,4 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
         // TODO
     }
 
-
-    private static class ItemRowMapper implements RowMapper<Mail> {
-        @Override
-        public Mail mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new ItemExtractor().extractData(rs);
-        }
-    }
-
-
-    private static class ItemExtractor implements ResultSetExtractor<Mail> {
-        @Override
-        public Mail extractData(ResultSet rs) throws SQLException, DataAccessException {
-            return Mail.builder()
-                    .id(rs.getLong("ID"))
-                    .toAddress(rs.getString("ADDRESS"))
-                    .subject(rs.getString("SUBJECT"))
-                    .body(rs.getString("BODY"))
-                    .build();
-        }
-    }
 }
