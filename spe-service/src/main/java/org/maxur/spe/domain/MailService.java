@@ -11,5 +11,4 @@ public interface MailService {
 
     void send(Mail mail);
 
-    void done();
 }

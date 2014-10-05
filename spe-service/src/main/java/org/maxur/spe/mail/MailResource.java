@@ -1,6 +1,6 @@
 package org.maxur.spe.mail;
 
-import org.maxur.spe.domain.Worker;
+import org.maxur.spe.service.SendMailService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,14 +19,14 @@ import javax.ws.rs.Produces;
 public class MailResource {
 
     @Inject
-    private Worker worker;
+    private SendMailService service;
 
     @POST
     @Produces("text/plain")
     public String sendMessage(
             @FormParam("message") String message
     ) throws Exception {
-        return worker.run(message);
+        return service.send(message);
     }
 
 }

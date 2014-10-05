@@ -101,9 +101,5 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
     }
 
-    @Override
-    public void done() {
-        // TODO
-    }
 
 }

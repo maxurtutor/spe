@@ -1,4 +1,4 @@
-package org.maxur.spe.service;
+package org.maxur.spe;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -14,6 +14,7 @@ import org.maxur.spe.infrastructure.ConnectionFactoryJDBCImpl;
 import org.maxur.spe.infrastructure.MailIdServiceJDBCImpl;
 import org.maxur.spe.infrastructure.MailRepositoryJDBCImpl;
 import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
+import org.maxur.spe.service.SendMailService;
 import org.slf4j.Logger;
 
 import java.net.URI;
@@ -31,11 +32,9 @@ public class Launcher {
 
     private static final URI BASE_URI = URI.create("http://localhost:9090/service/");
 
-    public static final String FROM_ADDRESS = "sender@here.com";
-
-    private Worker worker;
-
     private HttpServer httpServer;
+
+    private SendMailService sendMailService = new SendMailService();
 
     public static void main(String[] args) throws Exception {
         final Launcher client = new Launcher();
@@ -46,12 +45,7 @@ public class Launcher {
 
     private void init() {
         try {
-            MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
-            Factory<Connection> factory = new ConnectionFactoryJDBCImpl();
-            Repository<Mail> repository = new MailRepositoryJDBCImpl(factory);
-            MailIdService idService = new MailIdServiceJDBCImpl(factory);
-            worker = new Worker(mailService, repository, idService);
-
+            sendMailService.init();
         } catch (RuntimeException e) {
             LOGGER.error("System don't initialising", e);
         }
@@ -74,7 +68,7 @@ public class Launcher {
                 register(new AbstractBinder() {
                     @Override
                     protected void configure() {
-                        bind(worker).to(Worker.class);
+                        bind(sendMailService).to(SendMailService.class);
                     }
                 });
             }
@@ -83,7 +77,6 @@ public class Launcher {
 
     private void done() {
         httpServer.shutdownNow();
-        worker.done();
     }
 
 

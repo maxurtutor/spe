@@ -36,9 +36,5 @@ public class Worker {
         return message;
     }
 
-    public void done() {
-        mailService.done();
-        repository.done();
-    }
 
 }

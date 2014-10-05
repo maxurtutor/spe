@@ -15,5 +15,4 @@ public interface Repository<T> {
 
     void save(T value);
 
-    void done();
 }

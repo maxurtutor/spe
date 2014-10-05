@@ -84,8 +84,4 @@ public class MailServiceJavaxImpl implements MailService {
         return Session.getInstance(props);
     }
 
-    @Override
-    public void done() {
-        // TODO
-    }
 }
