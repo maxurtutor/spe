@@ -10,6 +10,8 @@ import org.maxur.spe.infrastructure.ConnectionFactoryJDBCImpl;
 import org.maxur.spe.infrastructure.MailIdServiceJDBCImpl;
 import org.maxur.spe.infrastructure.MailRepositoryJDBCImpl;
 import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
+import org.perf4j.LoggingStopWatch;
+import org.perf4j.StopWatch;
 
 import java.sql.Connection;
 
@@ -29,11 +31,15 @@ public class SendMailService {
     }
 
     public synchronized String send(String message) {
+        StopWatch stopWatch1 = new LoggingStopWatch("service");
         MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
         Repository<Mail> repository = new MailRepositoryJDBCImpl(factory);
         MailIdService idService = new MailIdServiceJDBCImpl(factory);
         Worker worker = new Worker(mailService, repository, idService);
-        return worker.run(message);
+        String run = worker.run(message);
+        stopWatch1.stop();
+        return run;
+
     }
 
 
