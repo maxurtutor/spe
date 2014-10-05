@@ -14,9 +14,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.maxur</groupId>
-            <artifactId>spe-service</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
         </dependency>
     </dependencies>
 
