@@ -4,21 +4,10 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.maxur.spe.domain.Factory;
-import org.maxur.spe.domain.Mail;
-import org.maxur.spe.domain.MailIdService;
-import org.maxur.spe.domain.MailService;
-import org.maxur.spe.domain.Repository;
-import org.maxur.spe.domain.Worker;
-import org.maxur.spe.infrastructure.ConnectionFactoryJDBCImpl;
-import org.maxur.spe.infrastructure.MailIdServiceJDBCImpl;
-import org.maxur.spe.infrastructure.MailRepositoryJDBCImpl;
-import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
 import org.maxur.spe.service.SendMailService;
 import org.slf4j.Logger;
 
 import java.net.URI;
-import java.sql.Connection;
 
 import static org.slf4j.LoggerFactory.getLogger;
 

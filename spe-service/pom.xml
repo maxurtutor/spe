@@ -127,6 +127,39 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-property</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.0,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[1.8,)</version>
+                                </requireJavaVersion>
+                                <requireReleaseDeps>
+                                    <message>No Snapshots Allowed!</message>
+                                    <failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
+                                    <excludes>
+                                        <exclude>org.maxur:*</exclude>
+                                    </excludes>
+                                </requireReleaseDeps>
+                                <requireUpperBoundDeps />
+                                <DependencyConvergence />
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

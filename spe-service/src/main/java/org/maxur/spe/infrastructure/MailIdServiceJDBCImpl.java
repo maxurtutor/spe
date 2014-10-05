@@ -31,7 +31,7 @@ public class MailIdServiceJDBCImpl implements MailIdService {
         try (
                 Connection con = factory.get();
                 Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery("select max(ID) from MAIL");
+                ResultSet rs = stmt.executeQuery("select max(ID) from MAIL")
         ) {
             return rs.next() ?
                     rs.getLong(1) + 1l :

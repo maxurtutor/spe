@@ -1,7 +1,5 @@
 package org.maxur.spe.domain;
 
-import javax.mail.MessagingException;
-
 /**
  * @author Maxim Yunusov
  * @version 1.0

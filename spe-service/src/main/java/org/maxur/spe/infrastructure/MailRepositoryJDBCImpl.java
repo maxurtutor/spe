@@ -35,7 +35,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
     public Mail findById(Long id) {
         try (
                 Connection con = factory.get();
-                PreparedStatement stmt = con.prepareStatement(SELECT_MAIL_BY_ID);
+                PreparedStatement stmt = con.prepareStatement(SELECT_MAIL_BY_ID)
         ) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -57,7 +57,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
         try (
                 Connection con = factory.get();
                 Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(SELECT_ALL_MAIL);
+                ResultSet rs = stmt.executeQuery(SELECT_ALL_MAIL)
         ) {
             List<Mail> result = new ArrayList<>();
             while (rs.next()) {
@@ -87,7 +87,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
     public void save(Mail value) {
         try (
                 Connection con = factory.get();
-                PreparedStatement stmt = con.prepareStatement(INSERT_MAIL);
+                PreparedStatement stmt = con.prepareStatement(INSERT_MAIL)
         ) {
             stmt.setLong(1, value.getId());
             stmt.setString(2, value.getToAddress());
