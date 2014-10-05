@@ -82,6 +82,7 @@ public class SendMailService {
     private Connection startTransaction() {
         try {
             Connection connection = factory.get();
+            // connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); Deadlock !
             connection.setAutoCommit(false);
             return connection;
         } catch (SQLException e) {
