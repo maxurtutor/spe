@@ -24,22 +24,21 @@ public class SendMailService {
 
     public static final String FROM_ADDRESS = "sender@here.com";
 
-    private Factory<Connection> factory;
+    private Worker worker;
 
     public void init() {
-        factory = new ConnectionFactoryJDBCImpl();
-    }
-
-    public synchronized String send(String message) {
-        StopWatch stopWatch1 = new Slf4JStopWatch("service");
+        Factory<Connection> factory = new ConnectionFactoryJDBCImpl();
         MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
         Repository<Mail> repository = new MailRepositoryJDBCImpl(factory);
         MailIdService idService = new MailIdServiceJDBCImpl(factory);
-        Worker worker = new Worker(mailService, repository, idService);
+        worker = new Worker(mailService, repository, idService);
+    }
+
+    public String send(String message) {
+        StopWatch stopWatch1 = new Slf4JStopWatch("service");
         String run = worker.run(message);
         stopWatch1.stop();
         return run;
-
     }
 
 

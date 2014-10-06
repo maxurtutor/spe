@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -22,16 +23,27 @@ public class MailIdServiceJDBCImpl implements MailIdService {
 
     private Factory<Connection> factory;
 
+    private Optional<Long> lastId = Optional.empty();
+
     public MailIdServiceJDBCImpl(Factory<Connection> factory) {
         this.factory = factory;
     }
 
     @Override
-    public Long getId() {
+    public synchronized Long getId() {
+        if (!lastId.isPresent()) {
+            lastId = Optional.of(loadId());
+        } else {
+            lastId = Optional.of((lastId.get() + 1));
+        }
+        return lastId.get();
+    }
+
+    private Long loadId() {
         try (
                 Connection con = factory.get();
                 Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery("select max(ID) from MAIL");
+                ResultSet rs = stmt.executeQuery("select max(ID) from MAIL")
         ) {
             return rs.next() ?
                     rs.getLong(1) + 1l :
