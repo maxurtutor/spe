@@ -1,7 +1,7 @@
 package org.maxur.spe.domain;
 
-import org.perf4j.LoggingStopWatch;
 import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 import static java.lang.String.format;
 
@@ -26,8 +26,9 @@ public class Worker {
     }
 
     public String run(String request) {
-        StopWatch stopWatch1 = new LoggingStopWatch("worker");
+        StopWatch stopWatch2 = new Slf4JStopWatch("getId");
         final Long id = idService.getId();
+        stopWatch2.stop();
         final String message = format("%d: %s", id, request);
         final Mail mail = Mail.builder()
                 .id(id)
@@ -35,13 +36,12 @@ public class Worker {
                 .body(message)
                 .toAddress(TO_ADDRESS)
                 .build();
-        StopWatch stopWatch2 = new LoggingStopWatch("save");
+        StopWatch stopWatch3 = new Slf4JStopWatch("save");
         repository.save(mail);
-        stopWatch2.stop();
-        StopWatch stopWatch3 = new LoggingStopWatch("send");
         stopWatch3.stop();
+        StopWatch stopWatch4 = new Slf4JStopWatch("send");
         mailService.send(mail);
-        stopWatch1.stop();
+        stopWatch4.stop();
         return message;
     }
 
