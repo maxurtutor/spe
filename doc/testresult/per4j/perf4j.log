@@ -1,0 +1,44 @@
+Performance Statistics   2014-10-07 17:13:20 - 2014-10-07 17:13:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+
+Performance Statistics   2014-10-07 17:13:30 - 2014-10-07 17:13:40
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+
+Performance Statistics   2014-10-07 17:13:40 - 2014-10-07 17:13:50
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+getid                                                    1.5           0          73         6.3         133
+save                                                     4.0           1          38         5.6         133
+send                                                    31.3          11         381        34.5         133
+service                                                 38.7          14         505        44.2         133
+work                                                    38.6          14         496        43.5         133
+
+Performance Statistics   2014-10-07 17:13:50 - 2014-10-07 17:14:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+getid                                                    0.3           0          16         1.0         382
+save                                                     4.1           0         182        11.9         382
+send                                                    18.4           7         169        15.5         382
+service                                                 24.4           9         206        19.8         382
+work                                                    24.3           8         206        19.8         382
+
+Performance Statistics   2014-10-07 17:14:00 - 2014-10-07 17:14:10
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+getid                                                    0.1           0          10         0.6         471
+save                                                     2.5           0          80         7.3         471
+send                                                    15.7           7         394        20.5         471
+service                                                 19.8          10         428        23.2         471
+work                                                    19.8          10         428        23.2         471
+
+Performance Statistics   2014-10-07 17:14:10 - 2014-10-07 17:14:20
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+getid                                                    0.0           0           0         0.0          14
+save                                                     1.1           0          12         3.0          14
+send                                                    15.9          11          26         4.8          14
+service                                                 18.4          12          28         5.0          14
+work                                                    18.4          12          28         5.0          14
+
+Performance Statistics   2014-10-07 17:14:20 - 2014-10-07 17:14:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+
+Performance Statistics   2014-10-07 17:14:30 - 2014-10-07 17:14:40
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+
