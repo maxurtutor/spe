@@ -2,6 +2,8 @@ package org.maxur.spe.infrastructure;
 
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailService;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 
 import javax.mail.BodyPart;
@@ -14,7 +16,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
 import java.util.Properties;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -50,9 +51,12 @@ public class MailServiceJavaxImpl implements MailService {
 
     @Override
     public void send(final Mail mail) {
+        StopWatch sw1 = new Slf4JStopWatch();
         try {
             Transport.send(makeMessageBy(mail));
+            sw1.stop("send");
         } catch (MessagingException e) {
+            sw1.stop("send.failure");
             LOGGER.error("Unable to send email", e);
             throw new IllegalStateException("Unable to send email", e);
         }

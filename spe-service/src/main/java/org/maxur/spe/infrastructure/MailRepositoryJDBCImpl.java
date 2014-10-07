@@ -3,6 +3,8 @@ package org.maxur.spe.infrastructure;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 
 import java.sql.Connection;
@@ -85,6 +87,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
     @Override
     public void save(Mail value) {
+        StopWatch sw1 = new Slf4JStopWatch();
         try (
                 Connection con = factory.get();
                 PreparedStatement stmt = con.prepareStatement(INSERT_MAIL)
@@ -94,11 +97,12 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
             stmt.setString(3, value.getSubject());
             stmt.setString(4, value.getBody());
             stmt.executeUpdate();
+            sw1.stop("save");
         } catch (SQLException e) {
+            sw1.stop("save.failure");
             LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection");
         }
-
     }
 
 

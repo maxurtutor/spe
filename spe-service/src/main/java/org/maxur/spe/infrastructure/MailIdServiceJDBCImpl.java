@@ -2,6 +2,8 @@ package org.maxur.spe.infrastructure;
 
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.MailIdService;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 
 import java.sql.Connection;
@@ -28,18 +30,22 @@ public class MailIdServiceJDBCImpl implements MailIdService {
 
     @Override
     public Long getId() {
+        StopWatch sw1 = new Slf4JStopWatch();
         try (
                 Connection con = factory.get();
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery("select max(ID) from MAIL")
         ) {
+            sw1.stop("getid");
             return rs.next() ?
                     rs.getLong(1) + 1l :
                     0l;
         } catch (SQLException e) {
+            sw1.stop("getid.failure");
             LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection", e);
         }
+
     }
 
 }
