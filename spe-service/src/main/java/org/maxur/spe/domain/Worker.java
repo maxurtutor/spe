@@ -44,5 +44,8 @@ public class Worker {
         return message;
     }
 
+    public void done() {
+        mailService.done();
+    }
 
 }

@@ -24,25 +24,28 @@ public class SendMailService {
 
     public static final String FROM_ADDRESS = "sender@here.com";
 
-    private Factory<Connection> factory;
-
     private StopWatchFactory stopWatchFactory;
+    private Worker worker;
 
     public void init() {
         stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
-        factory = new ConnectionFactoryJDBCImpl();
-    }
-
-    public synchronized String send(String message) {
-        StopWatch sw = stopWatchFactory.getStopWatch();
+        Factory<Connection> factory = new ConnectionFactoryJDBCImpl();
         MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
         Repository<Mail> repository = new MailRepositoryJDBCImpl(factory);
         MailIdService idService = new MailIdServiceJDBCImpl(factory);
-        Worker worker = new Worker(mailService, repository, idService);
+        worker = new Worker(mailService, repository, idService);
+    }
+
+    public String send(String message) {
+        StopWatch sw = stopWatchFactory.getStopWatch();
+
         final String result = worker.run(message);
         sw.stop("service");
         return result;
     }
 
+    public void done() {
+        worker.done();
+    }
 
 }

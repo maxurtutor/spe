@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailService;
-import org.maxur.spe.infrastructure.MailServiceJavaxImpl;
 
 import java.util.Iterator;
 
@@ -37,6 +36,7 @@ public class MailServiceTest {
                         .toAddress("receiver@there.com")
                         .build()
         );
+        service.done();
         server.stop();
 
         assertEquals(1, server.getReceivedEmailSize());

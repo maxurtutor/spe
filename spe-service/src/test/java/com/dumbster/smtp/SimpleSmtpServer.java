@@ -132,8 +132,8 @@ public class SimpleSmtpServer implements Runnable {
 
   /**
    * Check if the server has been placed in a stopped state. Allows another thread to
-   * stop the server safely.
-   * @return true if the server has been sent a stop signal, false otherwise
+   * done the server safely.
+   * @return true if the server has been sent a done signal, false otherwise
    */
   public synchronized boolean isStopped() {
     return stopped;

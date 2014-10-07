@@ -6,12 +6,15 @@ import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailService;
 import org.slf4j.Logger;
 
+import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -37,6 +40,9 @@ public class MailServiceJavaxImpl implements MailService {
     private final Properties props;
 
     private final StopWatchFactory stopWatchFactory;
+    private Session session;
+    private Transport transport;
+    private String host;
 
 
     public MailServiceJavaxImpl(final String fromAddress) {
@@ -47,8 +53,10 @@ public class MailServiceJavaxImpl implements MailService {
         this.stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         this.fromAddress = fromAddress;
         props = new Properties();
-        props.put("mail.smtp.host", host);
+        this.host = host;
+        props.put("mail.smtp.host", this.host);
         props.put("mail.smtp.port", port);
+        initSession();
     }
 
 
@@ -56,12 +64,38 @@ public class MailServiceJavaxImpl implements MailService {
     public void send(final Mail mail) {
         StopWatch sw = stopWatchFactory.getStopWatch();
         try {
-            Transport.send(makeMessageBy(mail));
+            checkConnection();
+            transport.sendMessage(makeMessageBy(mail), makeAddressBy(mail));
             sw.stop("send");
         } catch (MessagingException e) {
             sw.stop("send:failure");
             LOGGER.error("Unable to send email", e);
             throw new IllegalStateException("Unable to send email", e);
+        }
+    }
+
+    public synchronized void checkConnection() throws MessagingException {
+        if (!transport.isConnected()) {
+            transport.connect(this.host, "", "");
+        }
+    }
+
+    @Override
+    public void done() {
+        try {
+            transport.close();
+        } catch (MessagingException e) {
+            LOGGER.error("Unable to close smtp connection", e);
+            throw new IllegalStateException("Unable to close smtp connection", e);
+        }
+    }
+
+    private Address[] makeAddressBy(Mail mail) {
+        try {
+            return new Address[] {new InternetAddress(mail.getToAddress())};
+        } catch (AddressException e) {
+            LOGGER.error("Cannot get smtp address", e);
+            throw new IllegalStateException("Cannot get smtp address", e);
         }
     }
 
@@ -88,7 +122,20 @@ public class MailServiceJavaxImpl implements MailService {
     }
 
     private Session getSession() {
-        return Session.getInstance(props);
+        if (session == null) {
+            initSession();
+        }
+        return session;
+    }
+
+    private void initSession() {
+        session = Session.getInstance(props);
+        try {
+            transport = session.getTransport("smtp");
+        } catch (NoSuchProviderException e) {
+            LOGGER.error("Cannot get smtp connection", e);
+            throw new IllegalStateException("Cannot get smtp connection", e);
+        }
     }
 
 }

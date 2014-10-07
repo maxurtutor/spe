@@ -43,6 +43,7 @@ public class Launcher {
     private void run() throws Exception {
         startWebServer();
         System.in.read();
+        sendMailService.done();
     }
 
     private void startWebServer() {

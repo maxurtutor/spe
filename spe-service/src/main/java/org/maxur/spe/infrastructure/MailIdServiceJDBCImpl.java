@@ -26,13 +26,22 @@ public class MailIdServiceJDBCImpl implements MailIdService {
 
     private final Factory<Connection> factory;
 
+    private Long count;
+
     public MailIdServiceJDBCImpl(Factory<Connection> factory) {
         this.stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         this.factory = factory;
     }
 
     @Override
-    public Long getId() {
+    public synchronized Long getId() {
+        if (count == null) {
+            count = loadId();
+        }
+        return ++count;
+    }
+
+    public Long loadId() {
         StopWatch sw = stopWatchFactory.getStopWatch();
         try (
                 Connection con = factory.get();
@@ -41,7 +50,7 @@ public class MailIdServiceJDBCImpl implements MailIdService {
         ) {
             sw.stop("getid");
             return rs.next() ?
-                    rs.getLong(1) + 1l :
+                    rs.getLong(1) :
                     0l;
         } catch (SQLException e) {
             sw.stop("getid:failure");

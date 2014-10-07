@@ -29,5 +29,5 @@ class MailSendSimulation extends Simulation {
 			.pause(100 milliseconds)
 	      }
 
-	setUp(scn.inject(atOnceUsers(10))).protocols(httpProtocol)
+	setUp(scn.inject(atOnceUsers(100))).protocols(httpProtocol)
 }
