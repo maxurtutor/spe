@@ -7,6 +7,6 @@ log/
 site/
 
 *.iml
-*.log
+derby.log
 *.license
 *.diff

@@ -1,5 +1,7 @@
 package org.maxur.spe.infrastructure;
 
+import com.ecyrd.speed4j.StopWatch;
+import com.ecyrd.speed4j.StopWatchFactory;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
@@ -23,9 +25,12 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
     private static Logger LOGGER = getLogger(MailRepositoryJDBCImpl.class);
 
-    private Factory<Connection> factory;
+    private final Factory<Connection> factory;
+
+    private final StopWatchFactory stopWatchFactory;
 
     public MailRepositoryJDBCImpl(Factory<Connection> factory) {
+        this.stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         this.factory = factory;
     }
 
@@ -85,6 +90,7 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
 
     @Override
     public void save(Mail value) {
+        StopWatch sw = stopWatchFactory.getStopWatch();
         try (
                 Connection con = factory.get();
                 PreparedStatement stmt = con.prepareStatement(INSERT_MAIL)
@@ -94,7 +100,9 @@ public class MailRepositoryJDBCImpl implements Repository<Mail> {
             stmt.setString(3, value.getSubject());
             stmt.setString(4, value.getBody());
             stmt.executeUpdate();
+            sw.stop("save");
         } catch (SQLException e) {
+            sw.stop("save:failure");
             LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection");
         }

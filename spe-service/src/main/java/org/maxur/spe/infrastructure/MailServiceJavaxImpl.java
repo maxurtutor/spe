@@ -1,5 +1,7 @@
 package org.maxur.spe.infrastructure;
 
+import com.ecyrd.speed4j.StopWatch;
+import com.ecyrd.speed4j.StopWatchFactory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailService;
 import org.slf4j.Logger;
@@ -14,7 +16,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
 import java.util.Properties;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -35,12 +36,15 @@ public class MailServiceJavaxImpl implements MailService {
 
     private final Properties props;
 
+    private final StopWatchFactory stopWatchFactory;
+
 
     public MailServiceJavaxImpl(final String fromAddress) {
         this(fromAddress, DEFAULT_SMTP_HOST, DEFAULT_SMTP_PORT);
     }
 
     public MailServiceJavaxImpl(final String fromAddress, final String host, final int port) {
+        this.stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         this.fromAddress = fromAddress;
         props = new Properties();
         props.put("mail.smtp.host", host);
@@ -50,9 +54,12 @@ public class MailServiceJavaxImpl implements MailService {
 
     @Override
     public void send(final Mail mail) {
+        StopWatch sw = stopWatchFactory.getStopWatch();
         try {
             Transport.send(makeMessageBy(mail));
+            sw.stop("send");
         } catch (MessagingException e) {
+            sw.stop("send:failure");
             LOGGER.error("Unable to send email", e);
             throw new IllegalStateException("Unable to send email", e);
         }

@@ -1,5 +1,7 @@
 package org.maxur.spe.infrastructure;
 
+import com.ecyrd.speed4j.StopWatch;
+import com.ecyrd.speed4j.StopWatchFactory;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.MailIdService;
 import org.slf4j.Logger;
@@ -20,23 +22,29 @@ public class MailIdServiceJDBCImpl implements MailIdService {
 
     private static Logger LOGGER = getLogger(MailIdServiceJDBCImpl.class);
 
-    private Factory<Connection> factory;
+    private final StopWatchFactory stopWatchFactory;
+
+    private final Factory<Connection> factory;
 
     public MailIdServiceJDBCImpl(Factory<Connection> factory) {
+        this.stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         this.factory = factory;
     }
 
     @Override
     public Long getId() {
+        StopWatch sw = stopWatchFactory.getStopWatch();
         try (
                 Connection con = factory.get();
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery("select max(ID) from MAIL")
         ) {
+            sw.stop("getid");
             return rs.next() ?
                     rs.getLong(1) + 1l :
                     0l;
         } catch (SQLException e) {
+            sw.stop("getid:failure");
             LOGGER.error("Don't get database connection", e);
             throw new IllegalStateException("Don't get database connection", e);
         }

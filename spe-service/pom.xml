@@ -55,6 +55,11 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.ecyrd.speed4j</groupId>
+            <artifactId>speed4j</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>

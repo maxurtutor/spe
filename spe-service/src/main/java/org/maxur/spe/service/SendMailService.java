@@ -1,5 +1,7 @@
 package org.maxur.spe.service;
 
+import com.ecyrd.speed4j.StopWatch;
+import com.ecyrd.speed4j.StopWatchFactory;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailIdService;
@@ -24,16 +26,22 @@ public class SendMailService {
 
     private Factory<Connection> factory;
 
+    private StopWatchFactory stopWatchFactory;
+
     public void init() {
+        stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         factory = new ConnectionFactoryJDBCImpl();
     }
 
     public synchronized String send(String message) {
+        StopWatch sw = stopWatchFactory.getStopWatch();
         MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
         Repository<Mail> repository = new MailRepositoryJDBCImpl(factory);
         MailIdService idService = new MailIdServiceJDBCImpl(factory);
         Worker worker = new Worker(mailService, repository, idService);
-        return worker.run(message);
+        final String result = worker.run(message);
+        sw.stop("service");
+        return result;
     }
 
 
