@@ -33,6 +33,7 @@ public class SendMailService {
         factory = new ConnectionFactoryJDBCImpl();
     }
 
+    // TODO Lock !
     public synchronized String send(String message) {
         StopWatch sw = stopWatchFactory.getStopWatch();
         MailService mailService = new MailServiceJavaxImpl(FROM_ADDRESS);
