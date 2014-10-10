@@ -7,6 +7,7 @@ import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.Repository;
 import org.slf4j.Logger;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

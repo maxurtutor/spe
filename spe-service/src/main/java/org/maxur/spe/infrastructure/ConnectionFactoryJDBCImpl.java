@@ -21,7 +21,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
 
-    private static Logger LOGGER = getLogger(MailServiceJavaxImpl.class);
+    private static Logger LOGGER = getLogger(ConnectionFactoryJDBCImpl.class);
 
     private final Properties connectionProps;
 
@@ -33,8 +33,8 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
         connectionProps.put("user", prop.getProperty("jdbc.username"));
         connectionProps.put("password", prop.getProperty("jdbc.password"));
         url = prop.getProperty("jdbc.url");
-        if (!isDatabaseExist()) {
-            makeDatabase();
+        if (!DatabaseHelper.isDatabaseExist(this)) {
+            DatabaseHelper.makeDatabase(this);
         }
     }
 
@@ -50,20 +50,6 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
         return prop;
     }
 
-    private static final String TEST_SQL = "select * from MAIL";
-
-    private boolean isDatabaseExist() {
-        try (
-                Connection con = get();
-                Statement stmt = con.createStatement()
-        ) {
-            stmt.executeQuery(TEST_SQL);
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
     @Override
     public Connection get() {
         try {
@@ -73,29 +59,6 @@ public class ConnectionFactoryJDBCImpl implements Factory<Connection> {
         } catch (SQLException e) {
             LOGGER.error("Connection is not created", e);
             throw new IllegalStateException("Connection is not created", e);
-        }
-    }
-
-
-    private void makeDatabase() {
-        final InputStream ddl = ConnectionFactoryJDBCImpl.class.getResourceAsStream("/sql/schema.ddl");
-        if (ddl == null) {
-            LOGGER.error("DDL schema is not found");
-            throw new IllegalStateException("DDL schema is not found");
-        }
-        try (
-                Connection connection = get();
-                LogOutputStream stream = new LogOutputStream(LOGGER)
-        ){
-            ij.runScript(connection,
-                    ddl,
-                    "UTF-8",
-                    stream,
-                    "UTF-8"
-            );
-        } catch (SQLException | UnsupportedEncodingException e) {
-            LOGGER.error("Database is not created", e);
-            throw new IllegalStateException("Database is not created", e);
         }
     }
 

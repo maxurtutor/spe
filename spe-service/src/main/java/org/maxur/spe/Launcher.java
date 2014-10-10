@@ -65,6 +65,7 @@ public class Launcher {
     }
 
     private void done() {
+        sendMailService.done();
         httpServer.shutdownNow();
     }
 
