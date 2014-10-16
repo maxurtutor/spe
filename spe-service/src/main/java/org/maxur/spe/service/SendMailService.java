@@ -1,7 +1,10 @@
 package org.maxur.spe.service;
 
+import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.MetricRegistry;
 import com.ecyrd.speed4j.StopWatch;
 import com.ecyrd.speed4j.StopWatchFactory;
+import com.github.cb372.metrics.sigar.SigarMetrics;
 import org.maxur.spe.domain.Factory;
 import org.maxur.spe.domain.Mail;
 import org.maxur.spe.domain.MailIdService;
@@ -31,6 +34,15 @@ public class SendMailService {
     public void init() {
         stopWatchFactory = StopWatchFactory.getInstance("loggingFactory");
         factory = new ConnectionFactoryJDBCImpl();
+
+        SigarMetrics sm = SigarMetrics.getInstance();
+
+        final MetricRegistry registry = new MetricRegistry();
+        sm.registerGauges(registry);
+
+        final JmxReporter reporter = JmxReporter.forRegistry(registry).build();
+        reporter.start();
+
     }
 
     public synchronized String send(String message) {
